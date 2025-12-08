@@ -1,8 +1,540 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Systeme_RH.Models.ViewModels.HomeDashboardViewModel
+
+@{
+    ViewData["Title"] = "Tableau de Bord";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .welcome-header {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        margin-bottom: 2rem;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .welcome-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .welcome-header .role-badge {
+        background: rgba(255,255,255,0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .section-title i {
+        color: var(--primary-color);
+    }
+
+    /* CARTES ACCÈS RAPIDE */
+    .quick-access-card {
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        overflow: hidden;
+        height: 100%;
+        border-top: 4px solid;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .quick-access-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .quick-access-card .card-body {
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .quick-access-card i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .quick-access-card h5 {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .quick-access-card.primary { 
+        border-top-color: var(--primary-color); 
+    }
+    .quick-access-card.primary i { 
+        color: var(--primary-color); 
+    }
+    
+    .quick-access-card.success { 
+        border-top-color: var(--success-color); 
+    }
+    .quick-access-card.success i { 
+        color: var(--success-color); 
+    }
+
+    /* CARTES STATISTIQUES PERSONNELLES */
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 100%;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+    }
+
+    .stat-card h5 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.9;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.9;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card.primary { 
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%); 
+    }
+    .stat-card.warning { 
+        background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%); 
+    }
+    .stat-card.success { 
+        background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%); 
+    }
+    .stat-card.danger { 
+        background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%); 
+    }
+
+    .stat-card .btn {
+        margin-top: 1rem;
+        background: rgba(255,255,255,0.2);
+        border: 1px solid rgba(255,255,255,0.3);
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card .btn:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-2px);
+    }
+
+    /* CARTES ADMINISTRATION */
+    .admin-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.5s ease;
+    }
+
+    .admin-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 4px;
+        height: 100%;
+        transition: width 0.3s ease;
+    }
+
+    .admin-card.info::before { background: var(--accent-color); }
+    .admin-card.warning::before { background: var(--warning-color); }
+    .admin-card.success::before { background: var(--success-color); }
+    .admin-card.secondary::before { background: var(--secondary-color); }
+    .admin-card.primary::before { background: var(--primary-color); }
+    .admin-card.dark::before { background: var(--text-dark); }
+
+    .admin-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+
+    .admin-card:hover::before {
+        width: 100%;
+        opacity: 0.05;
+    }
+
+    .admin-card-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .admin-card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+    }
+
+    .admin-card-label {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .admin-card-icon {
+        font-size: 2.5rem;
+        opacity: 0.3;
+    }
+
+    .admin-card.info .admin-card-icon { color: var(--accent-color); }
+    .admin-card.warning .admin-card-icon { color: var(--warning-color); }
+    .admin-card.success .admin-card-icon { color: var(--success-color); }
+    .admin-card.secondary .admin-card-icon { color: var(--secondary-color); }
+    .admin-card.primary .admin-card-icon { color: var(--primary-color); }
+    .admin-card.dark .admin-card-icon { color: var(--text-dark); }
+
+    .admin-card-link {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        transition: all 0.2s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .admin-card-link:hover {
+        color: var(--primary-color);
+        gap: 0.6rem;
+        text-decoration: none;
+    }
+
+    /* DIVIDER */
+    .section-divider {
+        margin: 3rem 0;
+        border: 0;
+        border-top: 2px solid var(--border-color);
+    }
+
+    /* ANIMATIONS */
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- En-tête de bienvenue -->
+    <div class="welcome-header">
+        <h1>Bonjour, <strong>@Model.NomComplet</strong> 👋</h1>
+        <div class="role-badge">
+            <i class="bi bi-person-badge"></i> @Model.RolePrincipal
+        </div>
+    </div>
+
+    <!-- Section Accès Rapide -->
+    <div class="mb-5">
+        <div class="section-title">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <span>Accès Rapide</span>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <a asp-controller="Conges" asp-action="Create" class="quick-access-card success">
+                    <div class="card-body">
+                        <i class="bi bi-calendar-plus-fill"></i>
+                        <h5>Demander un Congé</h5>
+                    </div>
+                </a>
+            </div>
+
+            @if (Model.EmployeId.HasValue)
+            {
+                <div class="col-md-6 col-lg-3">
+                    <a asp-controller="Conges" asp-action="Index" asp-route-employeId="@Model.EmployeId" class="quick-access-card primary">
+                        <div class="card-body">
+                            <i class="bi bi-calendar3"></i>
+                            <h5>Mes Congés</h5>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <a asp-controller="Contrats" asp-action="Index" asp-route-employeId="@Model.EmployeId" class="quick-access-card primary">
+                        <div class="card-body">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                            <h5>Mes Contrats</h5>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <a asp-controller="Employes" asp-action="Details" asp-route-id="@Model.EmployeId" class="quick-access-card primary">
+                        <div class="card-body">
+                            <i class="bi bi-person-circle"></i>
+                            <h5>Mon Profil</h5>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Section Ma Situation (Employé uniquement) -->
+    @if (Model.EmployeId.HasValue)
+    {
+        <div class="mb-5">
+            <div class="section-title">
+                <i class="bi bi-person-badge-fill"></i>
+                <span>Ma Situation</span>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4">
+                    <div class="stat-card primary">
+                        <h5>Solde de Congés</h5>
+                        <div class="stat-value">@Model.MonSoldeConges</div>
+                        <div class="stat-label">jours disponibles</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4">
+                    <div class="stat-card warning">
+                        <h5>Demandes en attente</h5>
+                        <div class="stat-value">@Model.MesDemandesEnAttente</div>
+                        <div class="stat-label">en cours de traitement</div>
+                        <a asp-controller="Contrats" asp-action="Index" asp-route-employeId="@Model.EmployeId" class="btn btn-sm">Voir mes demandes</a>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-lg-4">
+                    <div class="stat-card @(Model.AUnContratActif ? "success" : "danger")">
+                        <h5>Statut Contractuel</h5>
+                        <div class="stat-value">
+                            @if (Model.AUnContratActif)
+                            {
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span>Actif</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-x-circle-fill"></i>
+                                <span>Inactif</span>
+                            }
+                        </div>
+                        <div class="stat-label">contrat de travail</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Section Administration RH (Admin/RH uniquement) -->
+    @if (User.IsInRole("Admin") || User.IsInRole("RH"))
+    {
+        <hr class="section-divider" />
+        
+        <div class="mb-4">
+            <div class="section-title">
+                <i class="bi bi-speedometer2"></i>
+                <span>Tableau de Bord RH</span>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="admin-card info">
+                        <div class="admin-card-content">
+                            <div>
+                                <div class="admin-card-label">Total Employés</div>
+                                <div class="admin-card-value">@Model.TotalEmployes</div>
+                            </div>
+                            <i class="bi bi-people-fill admin-card-icon"></i>
+                        </div>
+                        <a asp-controller="Employes" asp-action="Index" class="admin-card-link">
+                            Gérer les employés <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="admin-card warning">
+                        <div class="admin-card-content">
+                            <div>
+                                <div class="admin-card-label">Congés à valider</div>
+                                <div class="admin-card-value">@Model.TotalDemandesCongesEnAttente</div>
+                            </div>
+                            <i class="bi bi-clock-history admin-card-icon"></i>
+                        </div>
+                        <a asp-controller="Conges" asp-action="Index" class="admin-card-link">
+                            Traiter les demandes <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="admin-card success">
+                        <div class="admin-card-content">
+                            <div>
+                                <div class="admin-card-label">Contrats Actifs</div>
+                                <div class="admin-card-value">@Model.TotalContratsActifs</div>
+                            </div>
+                            <i class="bi bi-file-earmark-check-fill admin-card-icon"></i>
+                        </div>
+                        <a asp-controller="Contrats" asp-action="Index" class="admin-card-link">
+                            Voir les contrats <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="admin-card secondary">
+                        <div class="admin-card-content">
+                            <div>
+                                <div class="admin-card-label">Total Postes</div>
+                                <div class="admin-card-value">@Model.TotalPostes</div>
+                            </div>
+                            <i class="bi bi-briefcase-fill admin-card-icon"></i>
+                        </div>
+                        <a asp-controller="Postes" asp-action="Index" class="admin-card-link">
+                            Gérer les postes <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-4 col-xl-3">
+                    <div class="admin-card primary">
+                        <div class="admin-card-content">
+                            <div>
+                                <div class="admin-card-label">Départements</div>
+                                <div class="admin-card-value">@Model.TotalDepartements</div>
+                            </div>
+                            <i class="bi bi-building-fill admin-card-icon"></i>
+                        </div>
+                        <a asp-controller="Departements" asp-action="Index" class="admin-card-link">
+                            Gérer les départements <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="col-md-6 col-lg-4 col-xl-3">
+                        <div class="admin-card dark">
+                            <div class="admin-card-content">
+                                <div>
+                                    <div class="admin-card-label">Sécurité</div>
+                                    <div class="admin-card-value">
+                                        <i class="bi bi-shield-lock-fill"></i>
+                                    </div>
+                                </div>
+                                <i class="bi bi-shield-check admin-card-icon"></i>
+                            </div>
+                            <a asp-controller="Users" asp-action="Index" class="admin-card-link">
+                                Gérer les accès <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 </div>

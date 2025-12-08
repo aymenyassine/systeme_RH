@@ -1,0 +1,421 @@
+@model Systeme_RH.Models.ViewModels.ContratViewModel
+
+@{
+    ViewData["Title"] = "Modifier Contrat";
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 4px solid var(--warning-color);
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid #fcd34d;
+    }
+
+    .form-header h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #92400e;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-label-custom {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-control-custom, .form-select-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+    .form-control-custom:focus, .form-select-custom:focus {
+        border-color: var(--warning-color);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-select-custom option {
+        padding: 0.5rem;
+    }
+
+    .input-group-custom {
+        position: relative;
+    }
+
+    .input-group-custom .input-group-text {
+        background: var(--light-bg);
+        border: 2px solid var(--border-color);
+        border-right: none;
+        border-radius: 8px 0 0 8px;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .input-group-custom .form-control-custom {
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .file-preview {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 2px dashed var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-align: center;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .file-preview:hover {
+        border-color: var(--primary-color);
+        background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    }
+
+    .file-preview i {
+        font-size: 2.5rem;
+        color: var(--danger-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .file-preview a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .file-preview a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .form-check-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-check-custom:hover {
+        border-color: var(--warning-color);
+        background-color: #fffbeb;
+    }
+
+    .form-check-custom .form-check-input {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-right: 0.75rem;
+    }
+
+    .form-check-custom .form-check-input:checked {
+        background-color: var(--warning-color);
+        border-color: var(--warning-color);
+    }
+
+    .form-check-custom .form-check-label {
+        color: var(--text-dark);
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .btn-warning-custom {
+        background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-warning-custom:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+        transform: translateY(-2px);
+    }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .validation-summary ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #991b1b;
+    }
+
+    .validation-summary li {
+        margin: 0.25rem 0;
+    }
+
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .info-badge {
+        background: linear-gradient(135deg, #ecfeff 0%, #cffafe 100%);
+        border: 1px solid #67e8f9;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .info-badge i {
+        color: var(--accent-color);
+        font-size: 1.25rem;
+    }
+
+    .info-badge span {
+        color: var(--text-dark);
+        font-weight: 500;
+    }
+
+    .date-input-group {
+        position: relative;
+    }
+
+    .date-input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .date-input-group .form-control-custom {
+        padding-left: 2.5rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="form-card">
+        <div class="form-header">
+            <h4><i class="bi bi-pencil-square"></i> Modifier le Contrat</h4>
+        </div>
+        
+        <div class="form-body">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="EmployeId" />
+                <input type="hidden" asp-for="PieceJointeUrl" />
+
+                <!-- Informations actuelles -->
+                <div class="info-badge">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>Modification du contrat #@Model.Id pour @Model.EmployeNom</span>
+                </div>
+
+                <!-- Messages de validation -->
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <div class="row g-3">
+                    <!-- Type de Contrat -->
+                    <div class="col-md-6">
+                        <label asp-for="TypeContrat" class="form-label-custom">
+                            <i class="bi bi-file-earmark-text"></i> Type de Contrat
+                        </label>
+                        <select asp-for="TypeContrat" class="form-select-custom">
+                            <option value="CDI">CDI</option>
+                            <option value="CDD">CDD</option>
+                            <option value="ANAPEC">ANAPEC</option>
+                            <option value="Stage">Stage</option>
+                            <option value="Freelance">Freelance</option>
+                        </select>
+                        <span asp-validation-for="TypeContrat" class="field-validation-error"></span>
+                    </div>
+                    
+                    <!-- Salaire Mensuel -->
+                    <div class="col-md-6">
+                        <label asp-for="SalaireMensuel" class="form-label-custom">
+                            <i class="bi bi-cash-stack"></i> Salaire Mensuel
+                        </label>
+                        <div class="input-group-custom">
+                            <span class="input-group-text">DH</span>
+                            <input asp-for="SalaireMensuel" type="number" step="0.01" class="form-control-custom" />
+                        </div>
+                        <span asp-validation-for="SalaireMensuel" class="field-validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <!-- Date de début -->
+                    <div class="col-md-6">
+                        <label asp-for="DateDebut" class="form-label-custom">
+                            <i class="bi bi-calendar-check"></i> Date de début
+                        </label>
+                        <div class="date-input-group">
+                            <i class="bi bi-calendar"></i>
+                            <input asp-for="DateDebut" type="date" class="form-control-custom" />
+                        </div>
+                        <span asp-validation-for="DateDebut" class="field-validation-error"></span>
+                    </div>
+
+                    <!-- Date de fin -->
+                    <div class="col-md-6">
+                        <label asp-for="DateFin" class="form-label-custom">
+                            <i class="bi bi-calendar-x"></i> Date de fin
+                        </label>
+                        <div class="date-input-group">
+                            <i class="bi bi-calendar"></i>
+                            <input asp-for="DateFin" type="date" class="form-control-custom" />
+                        </div>
+                        <span asp-validation-for="DateFin" class="field-validation-error"></span>
+                        <small class="text-muted mt-1 d-block">Laisser vide pour les contrats à durée indéterminée</small>
+                    </div>
+                </div>
+
+                <!-- Pièce jointe -->
+                <div class="mt-4">
+                    <label class="form-label-custom">
+                        <i class="bi bi-paperclip"></i> Pièce jointe
+                    </label>
+                    
+                    @if (!string.IsNullOrEmpty(Model.PieceJointeUrl))
+                    {
+                        <div class="file-preview">
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                            <p class="mb-2">Document actuellement attaché :</p>
+                            <a href="@Model.PieceJointeUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye me-1"></i> Voir le document
+                            </a>
+                        </div>
+                    }
+                    
+                    <div class="mt-2">
+                        <label class="form-text text-muted">Remplacer par un nouveau fichier :</label>
+                        <input type="file" name="fichierJoint" class="form-control-custom" accept=".pdf,.jpg,.jpeg,.png" />
+                        <small class="text-muted mt-1 d-block">Formats acceptés : PDF, JPG, PNG (max 5MB)</small>
+                    </div>
+                </div>
+
+                <!-- Statut actif -->
+                <div class="form-check-custom mt-4">
+                    <input class="form-check-input" type="checkbox" asp-for="EstActif" />
+                    <label class="form-check-label" asp-for="EstActif">
+                        Contrat toujours actif
+                    </label>
+                    <div class="form-text mt-1">Décochez cette case pour marquer le contrat comme terminé</div>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+                    <a asp-action="Index" asp-route-employeId="@Model.EmployeId" class="btn-secondary-custom">
+                        <i class="bi bi-arrow-left me-1"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-warning-custom">
+                        <i class="bi bi-check-circle-fill me-1"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Mise en forme des dates
+            $('input[type="date"]').each(function() {
+                if ($(this).val()) {
+                    $(this).parent().addClass('has-value');
+                }
+            });
+
+            // Validation du fichier
+            $('input[type="file"]').on('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const fileSize = file.size / 1024 / 1024; // en MB
+                    const allowedTypes = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png'];
+                    
+                    if (!allowedTypes.includes(file.type)) {
+                        alert('Seuls les fichiers PDF et images sont acceptés.');
+                        $(this).val('');
+                        return;
+                    }
+                    
+                    if (fileSize > 5) {
+                        alert('Le fichier doit faire moins de 5MB.');
+                        $(this).val('');
+                    }
+                }
+            });
+        });
+    </script>
+}

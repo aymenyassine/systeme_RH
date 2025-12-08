@@ -1,0 +1,276 @@
+@model Systeme_RH.Models.ViewModels.DepartementViewModel
+
+@{
+    ViewData["Title"] = "Créer Département";
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 4px solid var(--primary-color);
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid #93c5fd;
+    }
+
+    .form-header h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .form-label-custom {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-control-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .form-control-custom::placeholder {
+        color: #94a3b8;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .btn-primary-custom:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, #1e3a8a 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+        transform: translateY(-2px);
+    }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fca5a5;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .validation-summary ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #991b1b;
+    }
+
+    .validation-summary li {
+        margin: 0.25rem 0;
+    }
+
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .field-validation-error i {
+        font-size: 0.875rem;
+    }
+
+    .info-section {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-section h6 {
+        color: var(--accent-color);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-section ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: var(--text-dark);
+    }
+
+    .info-section li {
+        margin: 0.25rem 0;
+        font-size: 0.95rem;
+    }
+
+    .form-illustration {
+        text-align: center;
+        margin-bottom: 1.5rem;
+        opacity: 0.8;
+    }
+
+    .form-illustration i {
+        font-size: 3rem;
+        color: var(--primary-color);
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="form-card">
+        <div class="form-header">
+            <h4><i class="bi bi-building-add"></i> Nouveau Département</h4>
+        </div>
+        
+        <div class="form-body">
+            <form asp-action="Create">
+                <!-- Section d'information -->
+                <div class="info-section">
+                    <h6><i class="bi bi-info-circle-fill"></i> À propos des départements</h6>
+                    <ul>
+                        <li>Un département représente une unité organisationnelle</li>
+                        <li>Les employés sont affectés à un département</li>
+                        <li>Les postes sont associés à des départements</li>
+                        <li>Un département peut contenir plusieurs équipes</li>
+                    </ul>
+                </div>
+
+                <!-- Messages de validation -->
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <!-- Illustration -->
+                <div class="form-illustration">
+                    <i class="bi bi-buildings"></i>
+                </div>
+
+                <!-- Champ Nom -->
+                <div class="mb-4">
+                    <label asp-for="Nom" class="form-label-custom">
+                        <i class="bi bi-building"></i> Nom du Département
+                    </label>
+                    <input asp-for="Nom" class="form-control-custom" 
+                           placeholder="Ex: Ressources Humaines, Informatique, Commercial..." />
+                    <span asp-validation-for="Nom" class="field-validation-error">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                        <span></span>
+                    </span>
+                    <small class="form-text text-muted mt-1 d-block">
+                        Choisissez un nom clair et descriptif pour votre département
+                    </small>
+                </div>
+
+                <!-- Boutons d'action -->
+                <div class="mt-4">
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="bi bi-plus-circle-fill"></i> Créer le département
+                    </button>
+                    <a asp-action="Index" class="btn-secondary-custom">
+                        <i class="bi bi-x-circle"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    
+    <script>
+        $(document).ready(function() {
+            // Focus automatique sur le champ Nom
+            $('#Nom').focus();
+            
+            // Validation en temps réel
+            $('#Nom').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $('[data-valmsg-for="Nom"]').hide();
+            });
+            
+            // Animation du bouton
+            $('.btn-primary-custom').hover(
+                function() {
+                    $(this).css('transform', 'translateY(-2px)');
+                },
+                function() {
+                    $(this).css('transform', 'translateY(0)');
+                }
+            );
+        });
+    </script>
+}

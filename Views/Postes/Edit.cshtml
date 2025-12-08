@@ -1,0 +1,66 @@
+@model Systeme_RH.Models.ViewModels.PosteViewModel
+
+@{
+    ViewData["Title"] = "Modifier le Poste";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white py-3">
+                    <h4 class="mb-0"><i class="bi bi-pencil-square me-2"></i> Modifier le Poste : @Model.Titre</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit">
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Titre" class="form-label fw-bold">Titre du Poste</label>
+                            <input asp-for="Titre" class="form-control form-control-lg" />
+                            <span asp-validation-for="Titre" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Salaire" class="form-label fw-bold">Salaire de référence (DH)</label>
+                            <div class="input-group">
+                                <input asp-for="Salaire" class="form-control" type="number" step="0.01" />
+                                <span class="input-group-text">DH</span>
+                            </div>
+                            <span asp-validation-for="Salaire" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="DepartementId" class="form-label fw-bold">Département d'Appartenance</label>
+                            <select asp-for="DepartementId" class="form-select" asp-items="ViewBag.DepartementId">
+                                <option value="">-- Sélectionner un département --</option>
+                            </select>
+                            <span asp-validation-for="DepartementId" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a asp-action="Index" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary px-5 fw-bold">
+                                <i class="bi bi-floppy"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

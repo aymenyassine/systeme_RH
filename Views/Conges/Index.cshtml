@@ -1,0 +1,847 @@
+@using Systeme_RH.Models.Enums
+@model Systeme_RH.Models.ViewModels.CongeListViewModel
+
+@{
+    ViewData["Title"] = "Gestion des Congés";
+    bool isRH = ViewBag.IsRH ?? false;
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .page-header h1 {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .page-header h1 i {
+        color: var(--warning-color);
+        font-size: 1.5rem;
+    }
+
+    .btn-warning-custom {
+        background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-warning-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        border-top: 4px solid;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .stat-card.primary { 
+        border-top-color: var(--primary-color); 
+    }
+    .stat-card.warning { 
+        border-top-color: var(--warning-color); 
+    }
+    .stat-card.success { 
+        border-top-color: var(--success-color); 
+    }
+    .stat-card.danger { 
+        border-top-color: var(--danger-color); 
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 80px;
+        height: 80px;
+        background: currentColor;
+        opacity: 0.05;
+        border-radius: 50%;
+        transform: translate(30px, -30px);
+    }
+
+    .stat-label {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-unit {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .filter-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .filter-header {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-form {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        align-items: end;
+    }
+
+    .form-label-custom {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-select-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background-color: white;
+        width: 100%;
+    }
+
+    .form-select-custom:focus {
+        border-color: var(--warning-color);
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        height: fit-content;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+    }
+
+    .btn-link-custom {
+        color: var(--text-muted);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        height: fit-content;
+    }
+
+    .btn-link-custom:hover {
+        color: var(--primary-color);
+        text-decoration: none;
+        background: var(--light-bg);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    .table-header h5 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .table-custom {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table-custom thead th {
+        background-color: #f8fafc;
+        color: var(--text-dark);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border-bottom: 2px solid var(--border-color);
+        white-space: nowrap;
+    }
+
+    .table-custom tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .table-custom tbody tr:hover {
+        background-color: #f8fafc;
+        transform: translateX(5px);
+    }
+
+    .table-custom tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .badge-custom {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .badge-custom.warning {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .badge-custom.success {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .badge-custom.danger {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .badge-custom.secondary {
+        background-color: #e2e8f0;
+        color: #475569;
+    }
+
+    .date-range {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 120px;
+    }
+
+    .date-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .date-item.start i {
+        color: var(--success-color);
+    }
+
+    .date-item.end i {
+        color: var(--danger-color);
+    }
+
+    .employee-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        min-width: 150px;
+    }
+
+    .employee-name {
+        color: var(--text-dark);
+        font-weight: 600;
+    }
+
+    .employee-department {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    .btn-action {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        border: none;
+        margin: 0 2px;
+    }
+
+    .btn-action.info {
+        background-color: #dbeafe;
+        color: var(--primary-color);
+    }
+
+    .btn-action.info:hover {
+        background-color: var(--primary-color);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .btn-action.success {
+        background-color: #d1fae5;
+        color: var(--success-color);
+    }
+
+    .btn-action.success:hover {
+        background-color: var(--success-color);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .btn-action.danger {
+        background-color: #fee2e2;
+        color: var(--danger-color);
+    }
+
+    .btn-action.danger:hover {
+        background-color: var(--danger-color);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .btn-action.secondary {
+        background-color: #e2e8f0;
+        color: var(--secondary-color);
+    }
+
+    .btn-action.secondary:hover {
+        background-color: var(--secondary-color);
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .empty-state {
+        padding: 4rem 2rem;
+        text-align: center;
+        color: var(--text-muted);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        opacity: 0.5;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h4 {
+        color: var(--text-dark);
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-custom {
+        border-radius: 8px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        margin-bottom: 1.5rem;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .alert-custom.success {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+    }
+
+    .alert-custom.danger {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+    }
+
+    .alert-custom i {
+        font-size: 1.25rem;
+    }
+
+    .modal-custom .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-custom .modal-header {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border-bottom: 2px solid #fca5a5;
+        border-radius: 12px 12px 0 0;
+        color: #991b1b;
+    }
+
+    .modal-custom .modal-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-custom .form-control {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .modal-custom .form-control:focus {
+        border-color: var(--danger-color);
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .duration-badge {
+        font-weight: 700;
+        color: var(--text-dark);
+        font-size: 1.1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+    }
+
+    .type-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        background: var(--light-bg);
+        color: var(--text-dark);
+        border: 1px solid var(--border-color);
+    }
+
+    .request-date {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- En-tête de la page -->
+    <div class="page-header">
+        <div>
+            <h1><i class="bi bi-calendar-check-fill"></i> @(isRH ? "Administration des Congés" : "Mes Congés")</h1>
+            @if (!isRH)
+            {
+                <div class="text-muted mt-1">
+                    <i class="bi bi-person-circle"></i> Gestion de vos demandes de congés
+                </div>
+            }
+        </div>
+        @if (!isRH)
+        {
+            <a asp-action="Create" class="btn-warning-custom">
+                <i class="bi bi-plus-circle"></i> Nouvelle Demande
+            </a>
+        }
+    </div>
+
+    <!-- Messages d'alerte -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert-custom success">
+            <i class="bi bi-check-circle-fill"></i>
+            <span>@TempData["Success"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert-custom danger">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <span>@TempData["Error"]</span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        @if (!isRH)
+        {
+            <div class="stat-card primary">
+                <div class="stat-label">
+                    <i class="bi bi-wallet2"></i> Mon Solde Restant
+                </div>
+                <div class="stat-value">@Model.Conges.FirstOrDefault()?.EmployeSoldeConges</div>
+                <div class="stat-unit">jours ouvrables</div>
+            </div>
+        }
+        
+        <div class="stat-card warning">
+            <div class="stat-label">
+                <i class="bi bi-clock-history"></i> En Attente
+            </div>
+            <div class="stat-value">@Model.DemandesEnAttente</div>
+            <div class="stat-unit">demande(s)</div>
+        </div>
+        
+        <div class="stat-card success">
+            <div class="stat-label">
+                <i class="bi bi-check-circle"></i> Validés
+            </div>
+            <div class="stat-value">@Model.DemandesValidees</div>
+            <div class="stat-unit">demande(s)</div>
+        </div>
+
+        @if (isRH)
+        {
+            <div class="stat-card danger">
+                <div class="stat-label">
+                    <i class="bi bi-x-circle"></i> Refusés
+                </div>
+                <div class="stat-value">@Model.DemandesRefusees</div>
+                <div class="stat-unit">demande(s)</div>
+            </div>
+        }
+    </div>
+
+    <!-- Filtres (RH seulement) -->
+    @if (isRH)
+    {
+        <div class="filter-card">
+            <div class="filter-header">
+                <i class="bi bi-funnel"></i> Filtres de Recherche
+            </div>
+            <form asp-action="Index" method="get" class="filter-form">
+                <div>
+                    <label class="form-label-custom">
+                        <i class="bi bi-tag"></i> Statut
+                    </label>
+                    <select name="statut" class="form-select-custom" asp-items="Html.GetEnumSelectList<EtatDemandeConge>()">
+                        <option value="">Tous les statuts</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label-custom">
+                        <i class="bi bi-calendar-week"></i> Type
+                    </label>
+                    <select name="type" class="form-select-custom" asp-items="Html.GetEnumSelectList<TypeConge>()">
+                        <option value="">Tous les types</option>
+                    </select>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-secondary-custom">
+                        <i class="bi bi-filter"></i> Appliquer
+                    </button>
+                    <a asp-action="Index" class="btn-link-custom">
+                        <i class="bi bi-x-circle"></i> Effacer
+                    </a>
+                </div>
+            </form>
+        </div>
+    }
+
+    <!-- Tableau des congés -->
+    <div class="table-container">
+        <div class="table-header">
+            <h5><i class="bi bi-list-ul"></i> Liste des Demandes</h5>
+            <div class="text-muted small">
+                <i class="bi bi-info-circle"></i> 
+                @Model.Conges.Count() demande(s) trouvée(s)
+            </div>
+        </div>
+        
+        <div class="table-responsive">
+            @if (!Model.Conges.Any())
+            {
+                <div class="empty-state">
+                    <i class="bi bi-calendar-x"></i>
+                    <h4 class="mt-3">Aucune demande de congé</h4>
+                    <p>@(isRH ? "Aucune demande de congé à afficher pour le moment." : "Vous n'avez pas encore fait de demande de congé.")</p>
+                    @if (!isRH)
+                    {
+                        <a asp-action="Create" class="btn-warning-custom">
+                            <i class="bi bi-plus-circle"></i> Faire une Demande
+                        </a>
+                    }
+                </div>
+            }
+            else
+            {
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            @if (isRH) 
+                            { 
+                                <th>Employé</th> 
+                            }
+                            <th>Dates</th>
+                            <th>Durée</th>
+                            <th>Type</th>
+                            <th>Statut</th>
+                            <th>Date Demande</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Conges)
+                        {
+                            <tr>
+                                @if (isRH)
+                                {
+                                    <td>
+                                        <div class="employee-info">
+                                            <span class="employee-name">@item.EmployeNom</span>
+                                            <span class="employee-department">@item.EmployeDepartement</span>
+                                        </div>
+                                    </td>
+                                }
+                                <td>
+                                    <div class="date-range">
+                                        <div class="date-item start">
+                                            <i class="bi bi-arrow-right-short"></i>
+                                            @item.DateDebut.ToShortDateString()
+                                        </div>
+                                        <div class="date-item end">
+                                            <i class="bi bi-arrow-left-short"></i>
+                                            @item.DateFin.ToShortDateString()
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="duration-badge">@item.NombreJours jours</span>
+                                </td>
+                                <td>
+                                    <span class="type-badge">@item.Type</span>
+                                </td>
+                                <td>
+                                    @if (item.Statut == EtatDemandeConge.EnAttente) 
+                                    { 
+                                        <span class="badge-custom warning">
+                                            <i class="bi bi-clock"></i> En Attente
+                                        </span> 
+                                    }
+                                    else if (item.Statut == EtatDemandeConge.Approuve) 
+                                    { 
+                                        <span class="badge-custom success">
+                                            <i class="bi bi-check-circle"></i> Approuvé
+                                        </span> 
+                                    }
+                                    else if (item.Statut == EtatDemandeConge.Refuse) 
+                                    { 
+                                        <span class="badge-custom danger">
+                                            <i class="bi bi-x-circle"></i> Refusé
+                                        </span> 
+                                    }
+                                    else 
+                                    { 
+                                        <span class="badge-custom secondary">
+                                            <i class="bi bi-slash-circle"></i> Annulé
+                                        </span> 
+                                    }
+                                </td>
+                                <td>
+                                    <div class="request-date">
+                                        <i class="bi bi-calendar"></i>
+                                        @item.DateDemande.ToShortDateString()
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-flex justify-content-end gap-1">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-action info" title="Voir détails">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        @if (isRH && item.Statut == EtatDemandeConge.EnAttente)
+                                        {
+                                            <form asp-action="Valider" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn-action success" title="Valider" 
+                                                        onclick="return confirm('Confirmer la validation de cette demande ?')">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            </form>
+                                            
+                                            <button type="button" class="btn-action danger" data-bs-toggle="modal" data-bs-target="#refusModal" 
+                                                    onclick="setRefusId(@item.Id)" title="Refuser">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        }
+
+                                        @if (!isRH && item.Statut == EtatDemandeConge.EnAttente)
+                                        {
+                                            <form asp-action="Cancel" asp-route-id="@item.Id" method="post" class="d-inline">
+                                                <button type="submit" class="btn-action secondary" title="Annuler ma demande" 
+                                                        onclick="return confirm('Voulez-vous vraiment annuler cette demande ?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal de refus -->
+<div class="modal fade modal-custom" id="refusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="Refuser" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-x-circle-fill"></i> Refuser la demande
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="congeIdInput" name="id" />
+                    <p class="text-muted mb-3">Veuillez indiquer le motif du refus :</p>
+                    <div class="mb-3">
+                        <textarea name="motifRefus" class="form-control" rows="4" required 
+                                  placeholder="Ex: Période de haute activité, effectif insuffisant, solde insuffisant..."></textarea>
+                    </div>
+                    <div class="alert alert-light border small">
+                        <i class="bi bi-info-circle text-primary"></i>
+                        Ce motif sera communiqué à l'employé concerné.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-check-circle me-1"></i> Confirmer le refus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setRefusId(id) {
+        document.getElementById('congeIdInput').value = id;
+    }
+
+    $(document).ready(function() {
+        // Animation des cartes statistiques
+        $('.stat-card').hover(
+            function() {
+                $(this).css('transform', 'translateY(-5px)');
+            },
+            function() {
+                $(this).css('transform', 'translateY(0)');
+            }
+        );
+
+        // Animation des lignes du tableau
+        $('tbody tr').hover(
+            function() {
+                $(this).css('transform', 'translateX(5px)');
+            },
+            function() {
+                $(this).css('transform', 'translateX(0)');
+            }
+        );
+
+        // Confirmation pour les actions
+        $('form[action*="Valider"]').on('submit', function(e) {
+            if (!confirm('⚠️ Confirmation de validation\n\nCette action déduira les jours du solde de l\'employé.\n\nÊtes-vous sûr de vouloir valider cette demande ?')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>

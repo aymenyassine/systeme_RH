@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace System_RH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207135409_FixCascadeCycle")]
+    partial class FixCascadeCycle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -403,9 +406,6 @@ namespace System_RH.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DateEmbauche")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("DateNaissance")
                         .HasColumnType("datetime2");
 
@@ -417,6 +417,7 @@ namespace System_RH.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Matricule")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nom")
@@ -429,9 +430,6 @@ namespace System_RH.Migrations
                     b.Property<string>("Prenom")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Salaire")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("SoldeConges")
                         .HasColumnType("decimal(18,2)");

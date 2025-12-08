@@ -1,0 +1,576 @@
+@using Systeme_RH.Models.Enums
+@model Systeme_RH.Models.ViewModels.CongeViewModel
+
+@{
+    ViewData["Title"] = "Demander un congé";
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .form-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 4px solid var(--warning-color);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid #fcd34d;
+    }
+
+    .form-header h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #78350f;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .form-body {
+        padding: 2rem;
+    }
+
+    .info-alert {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border: 2px solid #60a5fa;
+        border-left: 4px solid var(--accent-color);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .info-alert i {
+        color: #1e40af;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+    }
+
+    .info-alert p {
+        color: #1e3a8a;
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    .form-label-custom {
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-label-custom i {
+        color: var(--warning-color);
+        font-size: 1.1rem;
+    }
+
+    .form-control-custom, .form-select-custom {
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.875rem 1rem;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-dark);
+        transition: all 0.3s ease;
+        background-color: white;
+    }
+
+    .form-control-custom:focus, .form-select-custom:focus {
+        border-color: var(--warning-color);
+        box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        transform: translateY(-1px);
+        outline: none;
+    }
+
+    .form-select-custom {
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .form-select-custom option {
+        padding: 0.75rem;
+        font-weight: 500;
+    }
+
+    .date-input-group {
+        position: relative;
+    }
+
+    .date-input-group i {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--warning-color);
+        font-size: 1.1rem;
+        pointer-events: none;
+        font-weight: bold;
+    }
+
+    .date-input-group .form-control-custom {
+        padding-left: 2.75rem;
+        font-weight: 600;
+    }
+
+    textarea.form-control-custom {
+        min-height: 100px;
+        resize: vertical;
+        font-weight: 500;
+        line-height: 1.6;
+    }
+
+    textarea.form-control-custom::placeholder {
+        color: var(--text-muted);
+        font-weight: 400;
+        opacity: 0.7;
+    }
+
+    .btn-warning-custom {
+        background: linear-gradient(135deg, var(--warning-color) 0%, #d97706 100%);
+        border: none;
+        color: white;
+        font-weight: 700;
+        font-size: 1.05rem;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-warning-custom:hover {
+        background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-dark);
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.875rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+        margin-top: 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .validation-summary {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 2px solid #fca5a5;
+        border-left: 4px solid var(--danger-color);
+        border-radius: 8px;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .validation-summary ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #991b1b;
+        font-weight: 600;
+    }
+
+    .validation-summary li {
+        margin: 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .field-validation-error {
+        color: var(--danger-color);
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .field-validation-error i {
+        font-size: 0.875rem;
+    }
+
+    .form-text-custom {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-top: 0.5rem;
+        display: block;
+    }
+
+    .date-calculation {
+        background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        border: 2px solid #60a5fa;
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        display: none;
+        font-weight: 600;
+        color: #1e40af;
+    }
+
+    .date-calculation.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .date-calculation i {
+        font-size: 1.2rem;
+        margin-right: 0.5rem;
+    }
+
+    .date-calculation .duration {
+        color: #1e3a8a;
+        font-weight: 700;
+        font-size: 1.3rem;
+        margin-left: 0.5rem;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Amélioration de la lisibilité des inputs date */
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        cursor: pointer;
+        filter: brightness(0) saturate(100%) invert(54%) sepia(72%) saturate(2517%) hue-rotate(360deg) brightness(95%) contrast(97%);
+        font-size: 1.2rem;
+    }
+
+    input[type="date"] {
+        font-weight: 600;
+        color: var(--text-dark);
+    }
+    
+    .text-danger {
+        color: var(--danger-color) !important;
+    }
+    
+    .mb-3 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin-right: -0.75rem;
+        margin-left: -0.75rem;
+    }
+    
+    .col-md-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding-right: 0.75rem;
+        padding-left: 0.75rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="form-card">
+        <div class="form-header">
+            <h4><i class="bi bi-calendar-plus-fill"></i> Nouvelle Demande de Congé</h4>
+        </div>
+        
+        <div class="form-body">
+            <!-- Information -->
+            <div class="info-alert">
+                <i class="bi bi-info-circle-fill"></i>
+                <p>
+                    <strong>Votre demande sera soumise à validation par le service RH.</strong><br>
+                    Assurez-vous d'avoir un solde de congés suffisant pour la période demandée.
+                </p>
+            </div>
+
+            <form asp-action="Create" method="post" id="congeForm">
+                @Html.AntiForgeryToken()
+                
+                <!-- Messages de validation -->
+                <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+                <!-- Type de Congé -->
+                <div class="mb-4">
+                    <label asp-for="Type" class="form-label-custom">
+                        <i class="bi bi-calendar-week-fill"></i> Type de Congé
+                    </label>
+                    <select asp-for="Type" class="form-select-custom" asp-items="Html.GetEnumSelectList<TypeConge>()">
+                        <option value="">-- Sélectionner un type --</option>
+                    </select>
+                    <span asp-validation-for="Type" class="field-validation-error">
+                    </span>
+                </div>
+
+                <!-- Dates -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="DateDebut" class="form-label-custom">
+                            <i class="bi bi-calendar-check-fill"></i> Date de début
+                        </label>
+                        <div class="date-input-group">
+                            <i class="bi bi-calendar3"></i>
+                            <input asp-for="DateDebut" class="form-control-custom" type="date" 
+                                   min="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <span asp-validation-for="DateDebut" class="field-validation-error">
+                            
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="DateFin" class="form-label-custom">
+                            <i class="bi bi-calendar-x-fill"></i> Date de fin (inclus)
+                        </label>
+                        <div class="date-input-group">
+                            <i class="bi bi-calendar3"></i>
+                            <input asp-for="DateFin" class="form-control-custom" type="date" />
+                        </div>
+                        <span asp-validation-for="DateFin" class="field-validation-error">
+                            
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Calcul de la durée -->
+                <div id="dateCalculation" class="date-calculation">
+                    <i class="bi bi-clock-history"></i>
+                    Durée estimée : <span class="duration" id="calculatedDuration">0 jours</span>
+                </div>
+
+                <!-- Motif -->
+                <div class="mb-4">
+                    <label asp-for="Motif" class="form-label-custom">
+                        <i class="bi bi-chat-left-text-fill"></i> Motif / Commentaire
+                    </label>
+                    <textarea asp-for="Motif" class="form-control-custom" rows="3" 
+                              placeholder="Précisez la raison de votre absence..."></textarea>
+                    <span asp-validation-for="Motif" class="field-validation-error">
+                    </span>
+                    <span class="form-text-custom">
+                        <i class="bi bi-info-circle"></i> Ce motif sera examiné par le service RH
+                    </span>
+                </div>
+
+                <!-- Boutons -->
+                <div class="mt-4">
+                    <button type="submit" class="btn-warning-custom">
+                        <i class="bi bi-send-check-fill"></i> Envoyer la Demande
+                    </button>
+                    <a asp-action="MesConges" class="btn-secondary-custom">
+                        <i class="bi bi-x-circle"></i> Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Date d'aujourd'hui par défaut pour début
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            
+            const dateDebutInput = document.getElementById('DateDebut');
+            const dateFinInput = document.getElementById('DateFin');
+            
+            if (dateDebutInput && !dateDebutInput.value) {
+                dateDebutInput.value = todayStr;
+            }
+            
+            // Date de fin par défaut (7 jours après)
+            if (dateFinInput && !dateFinInput.value) {
+                const nextWeek = new Date(today);
+                nextWeek.setDate(nextWeek.getDate() + 7);
+                dateFinInput.value = nextWeek.toISOString().split('T')[0];
+            }
+            
+            // Calcul de la durée (jours ouvrés)
+            function calculateDuration() {
+                const startDate = new Date(dateDebutInput.value);
+                const endDate = new Date(dateFinInput.value);
+                const dateCalculation = document.getElementById('dateCalculation');
+                const calculatedDuration = document.getElementById('calculatedDuration');
+                
+                if (dateDebutInput.value && dateFinInput.value && startDate <= endDate) {
+                    let count = 0;
+                    const current = new Date(startDate);
+                    
+                    while (current <= endDate) {
+                        const dayOfWeek = current.getDay();
+                        // Exclure samedi (6) et dimanche (0)
+                        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                            count++;
+                        }
+                        current.setDate(current.getDate() + 1);
+                    }
+                    
+                    calculatedDuration.textContent = count + ' jour' + (count > 1 ? 's' : '') + ' ouvrés';
+                    dateCalculation.classList.add('active');
+                } else {
+                    dateCalculation.classList.remove('active');
+                }
+            }
+            
+            // Écouter les changements de dates
+            if (dateDebutInput) {
+                dateDebutInput.addEventListener('change', calculateDuration);
+            }
+            if (dateFinInput) {
+                dateFinInput.addEventListener('change', calculateDuration);
+            }
+            
+            // Calcul initial
+            calculateDuration();
+            
+            // Validation des dates
+            if (dateFinInput) {
+                dateFinInput.addEventListener('change', function() {
+                    const startDate = new Date(dateDebutInput.value);
+                    const endDate = new Date(this.value);
+                    
+                    if (endDate < startDate) {
+                        alert('⚠️ La date de fin ne peut pas être antérieure à la date de début.');
+                        this.value = dateDebutInput.value;
+                        calculateDuration();
+                    }
+                });
+            }
+            
+            // Animation au focus
+            const inputs = document.querySelectorAll('.form-control-custom, .form-select-custom');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    const parent = this.closest('.mb-4, .col-md-6');
+                    if (parent) {
+                        const label = parent.querySelector('.form-label-custom');
+                        if (label) {
+                            label.style.color = '#d97706';
+                        }
+                    }
+                });
+                
+                input.addEventListener('blur', function() {
+                    const parent = this.closest('.mb-4, .col-md-6');
+                    if (parent) {
+                        const label = parent.querySelector('.form-label-custom');
+                        if (label) {
+                            label.style.color = '#1e293b';
+                        }
+                    }
+                });
+            });
+            
+            // Focus sur le champ type
+            const typeSelect = document.getElementById('Type');
+            if (typeSelect) {
+                setTimeout(() => {
+                    typeSelect.focus();
+                }, 100);
+            }
+            
+            // Gestion de la soumission du formulaire
+            const form = document.getElementById('congeForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    // Validation supplémentaire côté client
+                    if (!dateDebutInput.value || !dateFinInput.value) {
+                        e.preventDefault();
+                        alert('Veuillez remplir toutes les dates.');
+                        return;
+                    }
+                    
+                    const startDate = new Date(dateDebutInput.value);
+                    const endDate = new Date(dateFinInput.value);
+                    
+                    if (endDate < startDate) {
+                        e.preventDefault();
+                        alert('⚠️ La date de fin ne peut pas être antérieure à la date de début.');
+                        return;
+                    }
+                    
+                    // Vérifier le type de congé
+                    if (!typeSelect.value) {
+                        e.preventDefault();
+                        alert('Veuillez sélectionner un type de congé.');
+                        typeSelect.focus();
+                        return;
+                    }
+                });
+            }
+            
+            // Définir la date minimum pour la date de fin
+            if (dateDebutInput) {
+                dateDebutInput.addEventListener('change', function() {
+                    if (dateFinInput) {
+                        dateFinInput.min = this.value;
+                    }
+                });
+                
+                // Initialiser la date minimum pour la date de fin
+                if (dateFinInput && dateDebutInput.value) {
+                    dateFinInput.min = dateDebutInput.value;
+                }
+            }
+        });
+    </script>
+}

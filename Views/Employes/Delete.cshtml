@@ -1,0 +1,238 @@
+@model Systeme_RH.Models.Employe
+
+@{
+    ViewData["Title"] = "Supprimer Employé";
+}
+
+<style>
+    .delete-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+
+    .warning-banner {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        border: 2px solid #f59e0b;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .warning-banner h3 {
+        color: #d97706;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .delete-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .card-header-danger {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+        text-align: center;
+    }
+
+    .employee-summary {
+        padding: 2rem;
+    }
+
+    .employee-header-delete {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .employee-avatar-delete {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+    }
+
+    .employee-details {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-value {
+        color: #1e293b;
+        font-weight: 500;
+    }
+
+    .alert-danger-custom {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        border: 1px solid #f87171;
+        border-radius: 8px;
+        padding: 1rem;
+    }
+
+    .btn-danger-custom {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-danger-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    }
+</style>
+
+<div class="container-fluid py-5">
+    <div class="delete-container">
+        <div class="warning-banner">
+            <h3><i class="bi bi-exclamation-triangle-fill"></i> Attention ! Action Critique</h3>
+            <p class="mb-0">
+                Vous êtes sur le point de supprimer définitivement un employé. 
+                <strong class="text-danger">Cette action supprimera également :</strong>
+            </p>
+            <ul class="mb-0 mt-2">
+                <li>Son historique de congés</li>
+                <li>Ses contrats associés</li>
+                <li>Toutes les données liées</li>
+            </ul>
+        </div>
+
+        <div class="delete-card">
+            <div class="card-header-danger">
+                <h5 class="mb-0"><i class="bi bi-trash-fill"></i> Confirmation de Suppression</h5>
+            </div>
+            
+            <div class="employee-summary">
+                <div class="employee-header-delete">
+                    <div class="employee-avatar-delete">
+                        @Model.!Nom[0]@Model.!Prenom[0]
+                    </div>
+                    <h3 class="mb-1">@Model.Nom @Model.Prenom</h3>
+                    <p class="text-muted">Matricule : @Model.Matricule</p>
+                </div>
+
+                <div class="employee-details">
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <i class="bi bi-person"></i> Nom Complet
+                        </span>
+                        <span class="detail-value fw-bold">@Model.Nom @Model.Prenom</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <i class="bi bi-building"></i> Département
+                        </span>
+                        <span class="detail-value">@(Model.Departement?.Nom ?? "-")</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <i class="bi bi-envelope"></i> Email
+                        </span>
+                        <span class="detail-value">@Model.EmailPersonnel</span>
+                    </div>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">
+                            <i class="bi bi-calendar"></i> Date d'Embauche
+                        </span>
+                        <span class="detail-value">@Model.DateEmbauche.ToShortDateString()</span>
+                    </div>
+                </div>
+
+                <div class="alert-danger-custom">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-exclamation-octagon-fill text-danger fs-4 me-2"></i>
+                        <div>
+                            <strong class="text-danger">Conséquences de cette action :</strong>
+                            <ul class="mb-0 mt-1 small">
+                                <li>L'employé sera définitivement supprimé de la base</li>
+                                <li>Tous les congés et contrats seront perdus</li>
+                                <li>Le compte utilisateur associé sera désactivé</li>
+                                <li>Cette action ne peut pas être annulée</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" id="deleteForm">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                        <a asp-action="Index" class="btn btn-outline-secondary-custom">
+                            <i class="bi bi-arrow-left"></i> Annuler
+                        </a>
+                        
+                        <button type="submit" class="btn btn-danger-custom" id="confirmDeleteBtn">
+                            <i class="bi bi-trash"></i> Confirmer la Suppression
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            let deleteConfirmed = false;
+            
+            $('#confirmDeleteBtn').on('click', function(e) {
+                if (!deleteConfirmed) {
+                    e.preventDefault();
+                    
+                    // Première confirmation
+                    if (confirm('⚠️ Êtes-vous ABSOLUMENT sûr de vouloir supprimer cet employé ?')) {
+                        // Seconde confirmation
+                        if (confirm('❌ Cette action supprimera TOUTES les données associées :\n- Historique de congés\n- Contrats\n- Données personnelles\n\nCette action est IRREVERSIBLE.\n\nConfirmez-vous la suppression définitive ?')) {
+                            deleteConfirmed = true;
+                            $(this).click();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,31 @@
+@model Systeme_RH.Models.ApplicationUser
+
+@{
+    ViewData["Title"] = "Supprimer";
+}
+
+<div class="container mt-5">
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading"><i class="bi bi-exclamation-triangle-fill"></i> Attention !</h4>
+        <p>Êtes-vous sûr de vouloir supprimer définitivement cet utilisateur ? Cette action est irréversible.</p>
+    </div>
+
+    <div class="card border-danger">
+        <div class="card-header bg-danger text-white">
+            Confirmation de suppression
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">@Model.Prenom @Model.Nom</h5>
+            <p class="card-text">
+                <strong>Email :</strong> @Model.Email <br />
+                <strong>ID :</strong> @Model.Id
+            </p>
+            
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                <a asp-action="Index" class="btn btn-secondary">Annuler</a>
+            </form>
+        </div>
+    </div>
+</div>

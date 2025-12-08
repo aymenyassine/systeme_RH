@@ -1,0 +1,235 @@
+@model Systeme_RH.Models.ViewModels.PosteViewModel
+
+@{
+    ViewData["Title"] = "Créer un Poste";
+}
+
+<style>
+    .create-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .card-header-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+    }
+
+    .card-header-success h4 {
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .creation-guide {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid #0ea5e9;
+    }
+
+    .guide-title {
+        color: #0ea5e9;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .guide-steps {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .guide-steps li {
+        margin-bottom: 0.5rem;
+        color: #475569;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section-title {
+        color: #1e293b;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e2e8f0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-success-custom {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-success-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <div class="create-card">
+                <div class="card-header-success">
+                    <h4><i class="bi bi-briefcase-fill"></i> Créer un nouveau poste</h4>
+                </div>
+                
+                <div class="card-body p-4">
+                    <div class="creation-guide">
+                        <h5 class="guide-title">
+                            <i class="bi bi-lightbulb"></i> Guide de création
+                        </h5>
+                        <ul class="guide-steps">
+                            <li>Le titre doit être clair et descriptif</li>
+                            <li>Sélectionnez le département approprié</li>
+                            <li>Définissez un salaire de référence réaliste</li>
+                            <li>Décrivez les principales missions du poste</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="Create" id="createForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <div class="form-section">
+                            <h5 class="form-section-title">
+                                <i class="bi bi-card-heading"></i> Informations de base
+                            </h5>
+                            
+                            <div class="mb-4">
+                                <label asp-for="Titre" class="form-label-custom">
+                                    <i class="bi bi-tag"></i> Intitulé du Poste *
+                                </label>
+                                <input asp-for="Titre" class="form-control" 
+                                       placeholder="Ex: Développeur Fullstack, Chef de Projet..." />
+                                <small class="text-muted">Titre clair et descriptif du poste</small>
+                                <span asp-validation-for="Titre" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="DepartementId" class="form-label-custom">
+                                    <i class="bi bi-building"></i> Département de rattachement *
+                                </label>
+                                <select asp-for="DepartementId" class="form-select" asp-items="ViewBag.DepartementId">
+                                    <option value="">-- Sélectionner un département --</option>
+                                </select>
+                                <small class="text-muted">Détermine l'unité organisationnelle du poste</small>
+                                <span asp-validation-for="DepartementId" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5 class="form-section-title">
+                                <i class="bi bi-cash-stack"></i> Rémunération
+                            </h5>
+                            
+                            <div class="mb-4">
+                                <label asp-for="Salaire" class="form-label-custom">
+                                    <i class="bi bi-currency-dollar"></i> Salaire de Référence (DH) *
+                                </label>
+                                <div class="input-group input-group-custom">
+                                    <input asp-for="Salaire" class="form-control" 
+                                           type="number" 
+                                           step="0.01"
+                                           placeholder="5000.00" />
+                                    <span class="input-group-text">DH</span>
+                                </div>
+                                <small class="text-muted">Salaire mensuel de base pour ce poste</small>
+                                <span asp-validation-for="Salaire" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h5 class="form-section-title">
+                                <i class="bi bi-card-text"></i> Description et Missions
+                            </h5>
+                            
+                            <div class="mb-4">
+                                <label asp-for="Description" class="form-label-custom">
+                                    <i class="bi bi-journal-text"></i> Description / Missions
+                                </label>
+                                <textarea asp-for="Description" class="form-control textarea-custom" 
+                                          rows="5"
+                                          placeholder="Décrivez les principales missions, responsabilités et compétences requises pour ce poste..."></textarea>
+                                <small class="text-muted">Cette description sera visible par les employés et candidats</small>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-4 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary-custom">
+                                <i class="bi bi-x-lg"></i> Annuler
+                            </a>
+                            
+                            <button type="submit" class="btn btn-success-custom">
+                                <i class="bi bi-check-lg"></i> Créer le poste
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Validation en temps réel
+            $('#Titre, #Salaire, #DepartementId').on('blur', function() {
+                validateField($(this));
+            });
+
+            function validateField(field) {
+                field.removeClass('is-invalid is-valid');
+                if (!field.val().trim()) {
+                    field.addClass('is-invalid');
+                    return false;
+                } else {
+                    field.addClass('is-valid');
+                    return true;
+                }
+            }
+
+            // Validation avant soumission
+            $('#createForm').on('submit', function(e) {
+                let isValid = true;
+                $('#Titre, #Salaire, #DepartementId').each(function() {
+                    if (!validateField($(this))) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    showToast('Veuillez corriger les erreurs dans le formulaire', 'error');
+                }
+            });
+        });
+    </script>
+}

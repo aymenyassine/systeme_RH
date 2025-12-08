@@ -1,0 +1,43 @@
+@model Systeme_RH.Models.ViewModels.ContratViewModel
+
+@{
+    ViewData["Title"] = "Clôturer le contrat";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-warning shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Clôture de Contrat</h4>
+                </div>
+                <div class="card-body">
+                    <p class="lead">
+                        Vous êtes sur le point de terminer le contrat <strong>@Model.TypeContrat</strong> 
+                        commencé le @Model.DateDebut.ToShortDateString().
+                    </p>
+                    
+                    @if(TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["Error"]</div>
+                    }
+
+                    <form asp-action="ConfirmerTerminer">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="mb-4">
+                            <label for="dateFin" class="form-label fw-bold">Date de fin réelle :</label>
+                            <input type="date" name="dateFin" class="form-control form-control-lg" required value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <div class="form-text">Cette date marquera la fin officielle du contrat.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg text-dark fw-bold">Confirmer la clôture</button>
+                            <a asp-action="Index" asp-route-employeId="@Model.EmployeId" class="btn btn-outline-secondary">Annuler</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+@model Systeme_RH.Models.ViewModels.CongeRapportViewModel
+@{
+    ViewData["Title"] = "Rapports Congés";
+}
+
+<h2 class="mb-4 fw-bold">
+    <i class="bi bi-graph-up"></i> Rapports des congés
+</h2>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <h6>Total</h6>
+                <h2>@Model.TotalDemandes</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h6>En attente</h6>
+                <h2 class="text-warning">@Model.EnAttente</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h6>Validées</h6>
+                <h2 class="text-success">@Model.Approuvees</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h6>Refusées</h6>
+                <h2 class="text-danger">@Model.Refusees</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <div class="card border-secondary">
+            <div class="card-body text-center">
+                <h6>Annulées</h6>
+                <h2>@Model.Annulees</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">
+                <i class="bi bi-calendar-range"></i> Par type de congé
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var item in Model.ParType)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            @item.Key
+                            <span class="badge bg-primary">@item.Value</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header fw-bold">
+                <i class="bi bi-building"></i> Par département
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    @foreach (var item in Model.ParDepartement)
+                    {
+                        <li class="list-group-item d-flex justify-content-between">
+                            @item.Key
+                            <span class="badge bg-success">@item.Value</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace System_RH.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207120852_Model")]
+    partial class Model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -403,20 +406,15 @@ namespace System_RH.Migrations
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("DateEmbauche")
-                        .HasColumnType("datetime2");
-
                     b.Property<DateTime>("DateNaissance")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("DepartementId")
-                        .HasColumnType("int");
 
                     b.Property<string>("EmailPersonnel")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Matricule")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nom")
@@ -430,9 +428,6 @@ namespace System_RH.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Salaire")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("SoldeConges")
                         .HasColumnType("decimal(18,2)");
 
@@ -444,8 +439,6 @@ namespace System_RH.Migrations
                     b.HasIndex("ApplicationUserId")
                         .IsUnique()
                         .HasFilter("[ApplicationUserId] IS NOT NULL");
-
-                    b.HasIndex("DepartementId");
 
                     b.HasIndex("PosteId");
 
@@ -463,10 +456,10 @@ namespace System_RH.Migrations
                     b.Property<int>("DepartementId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<decimal>("SalaireMax")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("Salaire")
+                    b.Property<decimal>("SalaireMin")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Titre")
@@ -575,13 +568,7 @@ namespace System_RH.Migrations
                     b.HasOne("Systeme_RH.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("Employe")
                         .HasForeignKey("Systeme_RH.Models.Employe", "ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Systeme_RH.Models.Departement", "Departement")
-                        .WithMany("Employes")
-                        .HasForeignKey("DepartementId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Systeme_RH.Models.Poste", "Poste")
                         .WithMany("Employes")
@@ -590,8 +577,6 @@ namespace System_RH.Migrations
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
-
-                    b.Navigation("Departement");
 
                     b.Navigation("Poste");
                 });
@@ -614,8 +599,6 @@ namespace System_RH.Migrations
 
             modelBuilder.Entity("Systeme_RH.Models.Departement", b =>
                 {
-                    b.Navigation("Employes");
-
                     b.Navigation("Postes");
                 });
 

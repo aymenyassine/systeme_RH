@@ -1,0 +1,320 @@
+@model Systeme_RH.Models.ViewModels.ContratViewModel
+
+@{
+    ViewData["Title"] = "Supprimer Contrat";
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .warning-banner {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 2px solid #fca5a5;
+        border-left: 6px solid var(--danger-color);
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        animation: pulse 2s infinite;
+    }
+
+    .warning-banner h4 {
+        color: #991b1b;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .warning-banner p {
+        color: #991b1b;
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .confirmation-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 4px solid var(--danger-color);
+    }
+
+    .confirmation-header {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid #fca5a5;
+    }
+
+    .confirmation-header h4 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #991b1b;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .confirmation-body {
+        padding: 2rem;
+    }
+
+    .contract-details {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .detail-value {
+        color: var(--text-dark);
+        font-weight: 600;
+        flex: 2;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .badge-custom {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+    }
+
+    .badge-custom.info {
+        background-color: #dbeafe;
+        color: var(--primary-dark);
+    }
+
+    .alert-custom {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border: 1px solid #fcd34d;
+        border-left: 4px solid var(--warning-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .alert-custom h6 {
+        color: #92400e;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alert-custom ul {
+        margin: 0;
+        padding-left: 1.5rem;
+        color: #92400e;
+    }
+
+    .alert-custom li {
+        margin: 0.25rem 0;
+    }
+
+    .btn-danger-custom {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .btn-danger-custom:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger-custom:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+        transform: translateY(-2px);
+    }
+
+    @@keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Bannière d'avertissement -->
+    <div class="warning-banner">
+        <h4><i class="bi bi-exclamation-triangle-fill"></i> Zone de Danger Critique</h4>
+        <p>
+            Vous êtes sur le point de supprimer définitivement ce contrat de la base de données.<br>
+            <strong class="text-danger">Cette action est irréversible et ne doit être utilisée qu'en cas d'erreur de saisie.</strong><br>
+            Pour une fin de contrat normale (démission, fin CDD), utilisez plutôt l'option "Fin de Contrat".
+        </p>
+    </div>
+
+    <!-- Carte de confirmation -->
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <h4><i class="bi bi-trash3-fill"></i> Suppression Définitive du Contrat</h4>
+        </div>
+        
+        <div class="confirmation-body">
+            <!-- Détails du contrat -->
+            <div class="contract-details">
+                <div class="detail-row">
+                    <span class="detail-label">Employé</span>
+                    <span class="detail-value">
+                        <i class="bi bi-person-fill"></i>
+                        @Model.EmployeNom
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Type de Contrat</span>
+                    <span class="detail-value">
+                        <span class="badge-custom info">@Model.TypeContrat</span>
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Période</span>
+                    <span class="detail-value">
+                        <i class="bi bi-calendar-check"></i>
+                        @Model.DateDebut.ToShortDateString()
+                        <i class="bi bi-arrow-right mx-2 text-muted"></i>
+                        @if (Model.DateFin.HasValue)
+                        {
+                            <i class="bi bi-calendar-x"></i>
+                            @Model.DateFin.Value.ToShortDateString()
+                        }
+                        else
+                        {
+                            <span class="text-muted">Indéterminée</span>
+                        }
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Salaire Mensuel</span>
+                    <span class="detail-value">
+                        <i class="bi bi-cash-coin"></i>
+                        @Model.SalaireMensuel.ToString("N2") DH
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Statut</span>
+                    <span class="detail-value">
+                        @if (Model.EstActif)
+                        {
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span class="text-success fw-bold">Actif</span>
+                        }
+                        else
+                        {
+                            <i class="bi bi-x-circle-fill text-danger"></i>
+                            <span class="text-danger fw-bold">Clôturé</span>
+                        }
+                    </span>
+                </div>
+            </div>
+
+            <!-- Avertissement important -->
+            <div class="alert-custom">
+                <h6><i class="bi bi-shield-exclamation"></i> Conséquences de cette suppression :</h6>
+                <ul>
+                    <li>Le contrat sera définitivement effacé de la base de données</li>
+                    <li>Toutes les données associées seront perdues</li>
+                    <li>Aucune restauration ne sera possible</li>
+                    <li>L'historique de l'employé sera affecté</li>
+                </ul>
+            </div>
+
+            <!-- Formulaire de suppression -->
+            <form asp-action="Delete">
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="EmployeId" />
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn-danger-custom" onclick="return confirm('Êtes-vous ABSOLUMENT sûr de vouloir supprimer définitivement ce contrat ? Cette action est irréversible.');">
+                        <i class="bi bi-trash3-fill me-2"></i> Supprimer Définitivement
+                    </button>
+                    <a asp-action="Index" asp-route-employeId="@Model.EmployeId" class="btn-secondary-custom">
+                        <i class="bi bi-x-circle me-2"></i> Annuler et Retour
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        // Confirmation supplémentaire
+        $('form').on('submit', function(e) {
+            if (!confirm('⚠️ ACTION IRREVERSIBLE ⚠️\n\nVoulez-vous vraiment supprimer ce contrat ?\nCette opération ne peut pas être annulée.')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
+</script>

@@ -1,0 +1,266 @@
+@model Systeme_RH.ViewModels.UserListViewModel
+
+@{
+    ViewData["Title"] = "Détails Utilisateur";
+}
+
+<style>
+    .details-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .card-header-details {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+    }
+
+    .card-header-details h3 {
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .user-profile-header {
+        text-align: center;
+        padding: 2rem 1rem;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    }
+
+    .user-avatar-xl {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+        border: 4px solid white;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .details-grid {
+        padding: 2rem;
+    }
+
+    .detail-row {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f5f9;
+        align-items: center;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: #475569;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-value {
+        color: #1e293b;
+    }
+
+    .badge-details {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .badge-role-admin {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+    }
+
+    .badge-role-rh {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+    }
+
+    .badge-role-employee {
+        background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+        color: white;
+    }
+
+    .badge-status-active {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+    .badge-status-inactive {
+        background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        color: white;
+    }
+
+    .card-footer-details {
+        background: #f8fafc;
+        padding: 1.5rem;
+        border-top: 1px solid #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-primary-custom {
+        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="details-card">
+        <div class="card-header-details">
+            <h3><i class="bi bi-person-badge"></i> Détails du compte utilisateur</h3>
+        </div>
+        
+        <div class="user-profile-header">
+            
+            <h2 class="mb-1">@Model.NomComplet</h2>
+            <p class="text-muted mb-0">@Model.Email</p>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="bi bi-envelope"></i> Adresse email
+                </div>
+                <div class="detail-value">
+                    <strong>@Model.Email</strong><br />
+                    <small class="text-muted">Identifiant de connexion principal</small>
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="bi bi-shield"></i> Rôle système
+                </div>
+                <div class="detail-value">
+                    @if (Model.Role == "Admin")
+                    {
+                        <span class="badge-details badge-role-admin">
+                            <i class="bi bi-shield-lock"></i> Administrateur
+                        </span>
+                        <p class="mt-1 small text-muted">Accès complet à toutes les fonctionnalités du système</p>
+                    }
+                    else if (Model.Role == "RH")
+                    {
+                        <span class="badge-details badge-role-rh">
+                            <i class="bi bi-briefcase"></i> Ressources Humaines
+                        </span>
+                        <p class="mt-1 small text-muted">Gestion des employés, contrats, congés et postes</p>
+                    }
+                    else
+                    {
+                        <span class="badge-details badge-role-employee">
+                            <i class="bi bi-person"></i> Employé
+                        </span>
+                        <p class="mt-1 small text-muted">Accès limité aux fonctionnalités personnelles</p>
+                    }
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="bi bi-power"></i> Statut du compte
+                </div>
+                <div class="detail-value">
+                    @if (Model.EstActif)
+                    {
+                        <span class="badge-details badge-status-active">
+                            <i class="bi bi-check-circle"></i> Actif
+                        </span>
+                        <p class="mt-1 small text-success">
+                            <i class="bi bi-check-lg"></i> L'utilisateur peut se connecter et utiliser le système
+                        </p>
+                    }
+                    else
+                    {
+                        <span class="badge-details badge-status-inactive">
+                            <i class="bi bi-slash-circle"></i> Inactif
+                        </span>
+                        <p class="mt-1 small text-danger">
+                            <i class="bi bi-x-lg"></i> L'utilisateur ne peut pas se connecter
+                        </p>
+                    }
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="bi bi-person"></i> Informations personnelles
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    <i class="bi bi-info-circle"></i> Métadonnées
+                </div>
+                <div class="detail-value">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> Dernière mise à jour : @DateTime.Now.ToString("dd/MM/yyyy HH:mm")<br />
+                        <i class="bi bi-hash"></i> ID : @Model.Id
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer-details">
+            <a asp-action="Index" class="btn btn-outline-secondary-custom">
+                <i class="bi bi-arrow-left"></i> Retour à la liste
+            </a>
+            
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary-custom">
+                <i class="bi bi-pencil-square"></i> Modifier l'utilisateur
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Animation d'entrée
+            $('.detail-row').each(function(index) {
+                $(this).css('opacity', '0').css('transform', 'translateX(-20px)');
+                setTimeout(() => {
+                    $(this).animate({
+                        opacity: 1,
+                        transform: 'translateX(0)'
+                    }, 300);
+                }, index * 100);
+            });
+        });
+    </script>
+}

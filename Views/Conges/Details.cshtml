@@ -1,0 +1,619 @@
+@using Systeme_RH.Models.Enums
+@model Systeme_RH.Models.ViewModels.CongeViewModel
+
+@{
+    ViewData["Title"] = "Détails de la demande";
+    bool isRH = User.IsInRole("RH") || User.IsInRole("Admin");
+}
+
+<style>
+    :root {
+        --primary-color: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary-color: #64748b;
+        --accent-color: #0ea5e9;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --danger-color: #ef4444;
+        --light-bg: #f8fafc;
+        --border-color: #e2e8f0;
+        --text-dark: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    .detail-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border-top: 4px solid var(--primary-color);
+    }
+
+    .detail-header {
+        background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid #93c5fd;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .detail-header h4 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .request-badge {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-left: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .status-badge.enattente {
+        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        color: #92400e;
+    }
+
+    .status-badge.approuve {
+        background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+        color: #065f46;
+    }
+
+    .status-badge.refuse {
+        background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+        color: #991b1b;
+    }
+
+    .status-badge.annule {
+        background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+        color: #475569;
+    }
+
+    .detail-body {
+        padding: 2rem;
+    }
+
+    .alert-custom {
+        border-radius: 8px;
+        border: none;
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .alert-custom.danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border: 1px solid #fca5a5;
+        border-left: 4px solid var(--danger-color);
+        color: #991b1b;
+    }
+
+    .alert-custom i {
+        font-size: 1.25rem;
+        flex-shrink: 0;
+        margin-top: 0.1rem;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .detail-section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border-color: var(--primary-color);
+    }
+
+    .section-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-item:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--text-muted);
+        font-weight: 500;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-value {
+        color: var(--text-dark);
+        font-weight: 600;
+        flex: 2;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+
+    .detail-value.large {
+        font-size: 1.3rem;
+        color: var(--primary-dark);
+    }
+
+    .badge-detail {
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        font-weight: 500;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .badge-detail.primary {
+        background-color: #dbeafe;
+        color: var(--primary-dark);
+    }
+
+    .motif-section {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .motif-title {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .motif-content {
+        color: var(--text-dark);
+        line-height: 1.6;
+        padding: 1rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid var(--border-color);
+        min-height: 80px;
+    }
+
+    .motif-empty {
+        color: var(--text-muted);
+        font-style: italic;
+        text-align: center;
+        padding: 2rem 0;
+    }
+
+    .detail-footer {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        padding: 1.5rem 2rem;
+        border-top: 2px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .btn-secondary-custom {
+        background: white;
+        border: 2px solid var(--border-color);
+        color: var(--text-muted);
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+
+    .btn-secondary-custom:hover {
+        background: var(--light-bg);
+        border-color: var(--secondary-color);
+        color: var(--text-dark);
+        transform: translateY(-2px);
+        text-decoration: none;
+    }
+
+    .btn-success-custom {
+        background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-success-custom:hover {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-danger-custom {
+        background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-danger-custom:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 2rem;
+        margin: 1.5rem 0;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 0.5rem;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--border-color);
+    }
+
+    .timeline-item {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .timeline-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -1.9rem;
+        top: 0.25rem;
+        width: 1.2rem;
+        height: 1.2rem;
+        border-radius: 50%;
+        background: var(--primary-color);
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px var(--primary-color);
+    }
+
+    .timeline-content h6 {
+        color: var(--text-dark);
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .timeline-content p {
+        color: var(--text-muted);
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .modal-custom .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    .modal-custom .modal-header {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border-bottom: 2px solid #fca5a5;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .modal-custom .modal-title {
+        color: var(--danger-color);
+        font-weight: 600;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="detail-card">
+        <!-- En-tête -->
+        <div class="detail-header">
+            <div class="d-flex align-items-center">
+                <h4><i class="bi bi-file-earmark-text"></i> Détails de la Demande</h4>
+                <span class="request-badge">
+                    <i class="bi bi-hash"></i>
+                    #@Model.Id
+                </span>
+                <span class="status-badge @Model.Statut.ToString().ToLower()">
+                    @if (Model.Statut == EtatDemandeConge.EnAttente) 
+                    { 
+                        <i class="bi bi-clock"></i>
+                        <span>En Attente</span>
+                    }
+                    else if (Model.Statut == EtatDemandeConge.Approuve) 
+                    { 
+                        <i class="bi bi-check-circle"></i>
+                        <span>Approuvé</span>
+                    }
+                    else if (Model.Statut == EtatDemandeConge.Refuse) 
+                    { 
+                        <i class="bi bi-x-circle"></i>
+                        <span>Refusé</span>
+                    }
+                    else 
+                    { 
+                        <i class="bi bi-slash-circle"></i>
+                        <span>Annulé</span>
+                    }
+                </span>
+            </div>
+            @if (isRH)
+            {
+                <a asp-action="Index" class="btn-secondary-custom">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            }
+            else
+            {
+                <a asp-action="MesConges" class="btn-secondary-custom">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            }
+        </div>
+        
+        <!-- Corps -->
+        <div class="detail-body">
+            <!-- Motif de refus -->
+            @if (Model.Statut == EtatDemandeConge.Refuse && !string.IsNullOrEmpty(Model.MotifRefus))
+            {
+                <div class="alert-custom danger">
+                    <i class="bi bi-x-circle-fill"></i>
+                    <div>
+                        <strong class="d-block mb-1">Motif du refus :</strong>
+                        @Model.MotifRefus
+                    </div>
+                </div>
+            }
+
+            <!-- Grille d'informations -->
+            <div class="detail-grid">
+                <!-- Section Employé -->
+                <div class="detail-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-person-circle"></i> Informations Employé
+                    </h5>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-person"></i> Nom
+                        </span>
+                        <span class="detail-value">
+                            <strong>@Model.EmployeNom</strong>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-card-text"></i> Matricule
+                        </span>
+                        <span class="detail-value">
+                            <span class="badge-detail primary">@Model.EmployeMatricule</span>
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-building"></i> Département
+                        </span>
+                        <span class="detail-value">
+                            @Model.EmployeDepartement
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Section Congé -->
+                <div class="detail-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-calendar-week"></i> Détails du Congé
+                    </h5>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-tag"></i> Type
+                        </span>
+                        <span class="detail-value">
+                            @Model.Type
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-calendar-range"></i> Durée
+                        </span>
+                        <span class="detail-value large">
+                            @Model.NombreJours jours
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            <i class="bi bi-calendar-day"></i> Date Demande
+                        </span>
+                        <span class="detail-value">
+                            @Model.DateDemande.ToShortDateString()
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline de la période -->
+            <div class="detail-section">
+                <h5 class="section-title">
+                    <i class="bi bi-calendar-range"></i> Période du Congé
+                </h5>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h6>Date de Début</h6>
+                            <p>@Model.DateDebut.ToLongDateString()</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h6>Date de Fin</h6>
+                            <p>@Model.DateFin.ToLongDateString()</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motif de l'employé -->
+            <div class="motif-section">
+                <h6 class="motif-title">
+                    <i class="bi bi-chat-left-text"></i> Motif de l'employé
+                </h6>
+                <div class="motif-content">
+                    @if (string.IsNullOrEmpty(Model.Motif))
+                    {
+                        <div class="motif-empty">
+                            <i class="bi bi-chat-left"></i>
+                            <p class="mt-2">Aucun motif précisé</p>
+                        </div>
+                    }
+                    else
+                    {
+                        @Model.Motif
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pied de page -->
+        <div class="detail-footer">
+            @if (Model.Statut == EtatDemandeConge.EnAttente)
+            {
+                if (isRH)
+                {
+                    <div class="d-flex gap-2">
+                        <form asp-action="Valider" asp-route-id="@Model.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-success-custom" 
+                                    onclick="return confirm('Confirmer la validation de cette demande ?')">
+                                <i class="bi bi-check-circle"></i> Valider la Demande
+                            </button>
+                        </form>
+                        <button type="button" class="btn-danger-custom" data-bs-toggle="modal" data-bs-target="#refusModal">
+                            <i class="bi bi-x-circle"></i> Refuser
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <form asp-action="Cancel" asp-route-id="@Model.Id" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-secondary-custom" 
+                                onclick="return confirm('Voulez-vous vraiment annuler votre demande ?')">
+                            <i class="bi bi-trash"></i> Annuler ma Demande
+                        </button>
+                    </form>
+                }
+            }
+            else
+            {
+                <div class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Cette demande a été traitée le @Model.DateValidation?.ToShortDateString()
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal de refus -->
+<div class="modal fade modal-custom" id="refusModal" tabindex="-1" aria-labelledby="refusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="Refuser" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="refusModalLabel">
+                        <i class="bi bi-x-circle-fill"></i> Refuser la demande
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-3">Veuillez indiquer le motif du refus pour l'employé :</p>
+                    <div class="mb-3">
+                        <textarea name="motifRefus" class="form-control" rows="4" required 
+                                  placeholder="Ex: Période de haute activité, effectif insuffisant, solde insuffisant..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i> Annuler
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-check-circle me-1"></i> Confirmer le refus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

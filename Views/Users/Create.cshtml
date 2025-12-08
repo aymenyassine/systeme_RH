@@ -1,0 +1,202 @@
+@model Systeme_RH.ViewModels.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Créer un utilisateur";
+}
+
+<style>
+    .create-card {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    .card-header-primary {
+        background: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+        color: white;
+        padding: 1.5rem;
+        border-bottom: none;
+    }
+
+    .card-header-primary h4 {
+        font-weight: 600;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .btn-success-custom {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-success-custom:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-outline-secondary-custom {
+        border: 1px solid #cbd5e1;
+        color: #64748b;
+        font-weight: 500;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .btn-outline-secondary-custom:hover {
+        background-color: #f8fafc;
+        border-color: #94a3b8;
+        transform: translateY(-2px);
+    }
+
+    .password-info {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <div class="create-card">
+                <div class="card-header-primary">
+                    <h4><i class="bi bi-person-plus-fill"></i> Créer un nouvel utilisateur</h4>
+                </div>
+                
+                <div class="card-body">
+                    <form asp-action="Create" id="createForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-4">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="Prenom" class="form-label">
+                                    <i class="bi bi-person"></i> Prénom *
+                                </label>
+                                <input asp-for="Prenom" class="form-control" placeholder="Entrez le prénom" />
+                                <span asp-validation-for="Prenom" class="text-danger small"></span>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label asp-for="Nom" class="form-label">
+                                    <i class="bi bi-person"></i> Nom *
+                                </label>
+                                <input asp-for="Nom" class="form-control" placeholder="Entrez le nom" />
+                                <span asp-validation-for="Nom" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Email" class="form-label">
+                                <i class="bi bi-envelope"></i> Adresse email *
+                            </label>
+                            <input asp-for="Email" class="form-control" 
+                                   placeholder="exemple@entreprise.com" 
+                                   type="email" />
+                            <div class="password-info">
+                                Cette adresse servira d'identifiant de connexion
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label">
+                                <i class="bi bi-key"></i> Mot de passe initial *
+                            </label>
+                            <input asp-for="Password" class="form-control" 
+                                   type="password" 
+                                   placeholder="Minimum 6 caractères" />
+                            <div class="password-info">
+                                L'utilisateur pourra modifier ce mot de passe après sa première connexion
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-5">
+                            <label asp-for="RoleSelectionne" class="form-label fw-bold">
+                                <i class="bi bi-shield"></i> Rôle système *
+                            </label>
+                            <select asp-for="RoleSelectionne" class="form-select" asp-items="ViewBag.Roles">
+                                <option value="">-- Sélectionner un rôle --</option>
+                            </select>
+                            <div class="password-info mt-1">
+                                Définit les permissions et accès de l'utilisateur
+                            </div>
+                            <span asp-validation-for="RoleSelectionne" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                            <a asp-action="Index" class="btn btn-outline-secondary-custom">
+                                <i class="bi bi-arrow-left"></i> Retour
+                            </a>
+                            
+                            <button type="submit" class="btn btn-success-custom">
+                                <i class="bi bi-check-lg"></i> Créer l'utilisateur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Ajouter une validation en temps réel
+            $('input, select').on('blur', function() {
+                $(this).removeClass('is-invalid');
+                if (!$(this).val().trim()) {
+                    $(this).addClass('is-invalid');
+                }
+            });
+
+            // Prévisualiser l'email généré
+            $('#Prenom, #Nom').on('input', function() {
+                const prenom = $('#Prenom').val().trim().toLowerCase();
+                const nom = $('#Nom').val().trim().toLowerCase();
+                
+                if (prenom && nom) {
+                    const emailPreview = prenom + '.' + nom + "@@SystemeRH.com";
+                    $('#Email').attr('placeholder', emailPreview);
+                }
+            });
+        });
+    </script>
+}
