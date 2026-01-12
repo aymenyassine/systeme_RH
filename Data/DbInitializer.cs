@@ -5,7 +5,6 @@ namespace Systeme_RH.Data
 {
     public static class DbInitializer
     {
-        // J'ai renommé 'Initialize' en 'SeedAdminAsync' pour corriger ton erreur
         public static async Task SeedAdminAsync(IServiceProvider serviceProvider)
         {
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();

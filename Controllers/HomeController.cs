@@ -49,7 +49,7 @@ namespace Systeme_RH.Controllers
                     model.MonSoldeConges = (int)employe.SoldeConges; // Cast si c'est un double
                     
                     // On utilise le service existant ou une requête directe légère
-                    model.MesDemandesEnAttente = await _context.DemandeConges
+                    model.MesDemandesEnAttente = await _context.DemandesConges
                         .CountAsync(c => c.EmployeId == user.EmployeId && c.Etat == Models.Enums.EtatDemandeConge.EnAttente);
                     
                     model.AUnContratActif = await _context.Contrats

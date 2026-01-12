@@ -17,4 +17,6 @@ namespace Systeme_RH.Models
         public virtual ICollection<Employe>? Employes { get; set; }
     }
 
+   
+
 }

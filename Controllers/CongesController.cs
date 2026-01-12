@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Systeme_RH.Interfaces;
 using Systeme_RH.Models; // Pour ApplicationUser
 using Systeme_RH.Models.Enums;

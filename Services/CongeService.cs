@@ -20,7 +20,7 @@ namespace Systeme_RH.Services
 
         public async Task<CongeViewModel> GetByIdAsync(int id)
         {
-            var conge = await _context.DemandeConges // Correction du nom de la table
+            var conge = await _context.DemandesConges // Correction du nom de la table
                 .Include(c => c.Employe)
                 .ThenInclude(e => e!.Departement)
                 .FirstOrDefaultAsync(c => c.Id == id);
@@ -33,7 +33,7 @@ namespace Systeme_RH.Services
 
         public async Task<List<CongeViewModel>> GetByEmployeAsync(int employeId)
         {
-            var conges = await _context.DemandeConges
+            var conges = await _context.DemandesConges
                 .Where(c => c.EmployeId == employeId)
                 .OrderByDescending(c => c.DateDemande)
                 .ToListAsync();
@@ -44,7 +44,7 @@ namespace Systeme_RH.Services
         // CORRECTION ICI : Utilisation de EtatDemandeConge pour coller à l'interface
         public async Task<CongeListViewModel> GetAllAsync(EtatDemandeConge? statut = null, TypeConge? type = null, int? employeId = null)
         {
-            var query = _context.DemandeConges
+            var query = _context.DemandesConges
                 .Include(c => c.Employe)
                 .AsQueryable();
 
@@ -66,17 +66,17 @@ namespace Systeme_RH.Services
                 StatutFilter = statut,
                 TypeFilter = type,
                 EmployeIdFilter = employeId,
-                TotalDemandes = await _context.DemandeConges.CountAsync(),
+                TotalDemandes = await _context.DemandesConges.CountAsync(),
                 // Utilisation de EtatDemandeConge
-                DemandesEnAttente = await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.EnAttente),
-                DemandesValidees = await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.Approuve),
-                DemandesRefusees = await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.Refuse)
+                DemandesEnAttente = await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.EnAttente),
+                DemandesValidees = await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.Approuve),
+                DemandesRefusees = await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.Refuse)
             };
         }
 
         public async Task<List<CongeViewModel>> GetDemandesEnAttenteAsync()
         {
-            var conges = await _context.DemandeConges
+            var conges = await _context.DemandesConges
                 .Include(c => c.Employe)
                 .ThenInclude(e => e!.Departement)
                 .Where(c => c.Etat == EtatDemandeConge.EnAttente) // Correction Enum
@@ -123,7 +123,7 @@ namespace Systeme_RH.Services
                 DateDemande = DateTime.Now
             };
 
-            _context.DemandeConges.Add(demande);
+            _context.DemandesConges.Add(demande);
             await _context.SaveChangesAsync();
 
             return MapToViewModel(demande);
@@ -131,7 +131,7 @@ namespace Systeme_RH.Services
 
         public async Task<bool> CancelDemandeAsync(int congeId, int employeId)
         {
-            var demande = await _context.DemandeConges.FindAsync(congeId);
+            var demande = await _context.DemandesConges.FindAsync(congeId);
 
             if (demande == null || demande.EmployeId != employeId) return false;
 
@@ -147,7 +147,7 @@ namespace Systeme_RH.Services
 
         public async Task<bool> ValiderDemandeAsync(int congeId, int validateurId)
         {
-            var demande = await _context.DemandeConges
+            var demande = await _context.DemandesConges
                                 .Include(d => d.Employe)
                                 .FirstOrDefaultAsync(d => d.Id == congeId);
 
@@ -176,7 +176,7 @@ namespace Systeme_RH.Services
 
         public async Task<bool> RefuserDemandeAsync(int congeId, int validateurId, string motifRefus)
         {
-            var demande = await _context.DemandeConges.FindAsync(congeId);
+            var demande = await _context.DemandesConges.FindAsync(congeId);
             if (demande == null) return false;
 
             if (demande.Etat != EtatDemandeConge.EnAttente)
@@ -196,15 +196,15 @@ namespace Systeme_RH.Services
         {
             return new Dictionary<string, int>
             {
-                { "EnAttente", await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.EnAttente) },
-                { "Approuve", await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.Approuve) },
-                { "Refuse", await _context.DemandeConges.CountAsync(c => c.Etat == EtatDemandeConge.Refuse) }
+                { "EnAttente", await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.EnAttente) },
+                { "Approuve", await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.Approuve) },
+                { "Refuse", await _context.DemandesConges.CountAsync(c => c.Etat == EtatDemandeConge.Refuse) }
             };
         }
 
         public async Task<bool> HasConflictAsync(int employeId, DateTime dateDebut, DateTime dateFin, int? excludeCongeId = null)
         {
-            var query = _context.DemandeConges
+            var query = _context.DemandesConges
                 .Where(c => c.EmployeId == employeId &&
                             c.Etat != EtatDemandeConge.Annule &&
                             c.Etat != EtatDemandeConge.Refuse &&
@@ -256,7 +256,7 @@ namespace Systeme_RH.Services
 
         public async Task<CongeRapportViewModel> GetRapportAsync()
         {
-            var baseQuery = _context.DemandeConges
+            var baseQuery = _context.DemandesConges
                 .Include(c => c.Employe)
                 .ThenInclude(e => e!.Departement);
 

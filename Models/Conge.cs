@@ -1,4 +1,3 @@
-using Systeme_RH.Models;
 using Systeme_RH.Models.Enums;
 
 namespace Systeme_RH.Models;
